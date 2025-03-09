@@ -7,20 +7,24 @@ namespace Products.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController : ControllerBase
+    public class ProductController(ApplicationDbContext context) : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context = context;
 
-        public ProductController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        // GET: api/Product
         [HttpGet]
         public IActionResult GetProducts()
         {
             var products = _context.Products.ToList();
+            return Ok(products);
+        }
+
+        [HttpGet("search")]
+        public IActionResult GetProductsByName([FromQuery] string name)
+        {
+            var products = _context.Products
+                .Where(p => p.Name.Contains(name))
+                .ToList();
+
             return Ok(products);
         }
 
@@ -37,7 +41,6 @@ namespace Products.Controllers
             return Ok(product);
         }
 
-        // POST: api/Product
         [HttpPost]
         public async Task<IActionResult> CreateProduct([FromBody] Product product)
         {
@@ -55,16 +58,13 @@ namespace Products.Controllers
         [HttpGet("region/{regionId}")]
         public IActionResult GetProductsByRegion(int regionId)
         {
-            // Извлекаем все продукты, у которых OriginRegionId соответствует переданному regionId
             var products = _context.Products.Where(p => p.OriginRegionId == regionId).ToList();
 
-            // Если продукты не найдены, возвращаем NotFound
             if (products == null || products.Count == 0)
             {
                 return NotFound();
             }
 
-            // Возвращаем найденные продукты
             return Ok(products);
         }
 
