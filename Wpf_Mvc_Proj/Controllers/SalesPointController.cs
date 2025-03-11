@@ -24,6 +24,15 @@ namespace SalesPoints.Controllers
             return Ok(salesPoints);
         }
 
+        [HttpGet("region")]
+        public IActionResult GetSalesPoints([FromQuery] int regionId)
+        {
+            var salesPoints = _context.SalesPoints
+                .Where(s => s.RegionId == regionId)
+                .ToList();
+            return Ok(salesPoints);
+        }
+
         // GET: api/SalesPoint/{id}
         [HttpGet("{id}")]
         public IActionResult GetSalesPoint(int id)

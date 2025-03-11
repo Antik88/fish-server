@@ -102,5 +102,4 @@ namespace Wpf_Mvc_Proj.Models
         [Column("origin_info")]
         public string OriginInfo { get; set; }
     }
-
 }
